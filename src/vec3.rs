@@ -1,5 +1,5 @@
 use pyo3::prelude::*;
-use std::ops;
+use std::{ops, fmt};
 
 // useful for defining python operators
 #[derive(FromPyObject)]
@@ -330,6 +330,18 @@ impl ops::Neg for Vec3 {
             y: -self.y,
             z: -self.z,
         }
+    }
+}
+
+impl fmt::Display for Vec3 {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Vec3({}, {}, {})",
+            self.x,
+            self.y,
+            self.z
+        )
     }
 }
 
