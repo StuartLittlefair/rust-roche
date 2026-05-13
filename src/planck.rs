@@ -1,14 +1,5 @@
 use pyo3::prelude::*;
-
-// Speed of light, MKS, (exact value)
-pub const C: f64 = 2.99792458e8;
-
-// Planck's constant, MKS
-pub const H: f64 = 6.6262e-34;
-
-// Boltzmann's constant, MKS
-pub const K: f64 = 1.3806e-23;
-
+use crate::constants::{C, H, K};
 ///
 /// Computes the Planck function Bnu = (2 h \nu^3/c^2)/(exp(h \nu/kT) - 1)
 ///  as a function of wavelength and temperature. Output units are W/m**2/Hz/sr.

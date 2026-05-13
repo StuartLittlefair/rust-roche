@@ -1,3 +1,5 @@
+use pyo3::prelude::*;
+use std::fmt;
 use crate::Etype;
 use crate::Vec3;
 
@@ -7,20 +9,36 @@ use crate::Vec3;
 /// a relative gravity, a vector of phase pairs defining when the point is eclipsed by
 /// another model component, and a flux.
 ///
+#[pyclass(skip_from_py_object)]
 #[derive(Clone, Debug)]
 pub struct Point {
+    #[pyo3(get)]
     pub position: Vec3,
+
+    #[pyo3(get)]
     pub direction: Vec3,
+
+    #[pyo3(get)]
     pub area: f32,
+
+    #[pyo3(get)]
     pub gravity: f32,
+
+    #[pyo3(get)]
     pub eclipse: Etype,
+
+    #[pyo3(get)]
     pub flux: f32,
 }
 
+
+#[pymethods]
 impl Point {
+    
     ///
     /// Creates a new Point.
     ///
+    #[new]
     pub fn new(position: Vec3, direction: Vec3, area: f64, gravity: f64, eclipse: Etype) -> Self {
         Self {
             position,
@@ -37,7 +55,7 @@ impl Point {
     pub fn set_flux(&mut self, flux: f32) {
         self.flux = flux;
     }
-
+    
     ///
     ///checks that the given phase is not during one of the
     /// phase ranges when the point is eclipsed.
@@ -51,7 +69,7 @@ impl Point {
         }
         true
     }
-
+    
     ///
     /// This version of is_visible will not correct for phases outside
     /// of expected range to speed up large loops.
@@ -66,6 +84,13 @@ impl Point {
         }
         true
     }
+
+    fn __repr__(&self) -> String {
+        // We use the `format!` macro to create a string. Its first argument is a
+        // format string, followed by any number of parameters which replace the
+        // `{}`'s in the format string.
+        format!("Point({}, {}, {}, {}, {:?}, {})", self.position, self.direction, self.area, self.gravity, self.eclipse, self.flux)
+    }
 }
 
 impl Default for Point {
@@ -79,3 +104,20 @@ impl Default for Point {
         )
     }
 }
+
+impl fmt::Display for Point {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(
+            f,
+            "Point({}, {}, {}, {}, {:?}, {})",
+            self.position,
+            self.direction,
+            self.area,
+            self.gravity,
+            self.eclipse,
+            self.flux
+        )
+    }
+}
+
+
