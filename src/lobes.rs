@@ -3,6 +3,7 @@ use crate::potential::{drpot, rpot};
 use crate::x_lagrange::x_l1;
 use crate::{Star, Vec3};
 use pyo3::prelude::*;
+use numpy::{IntoPyArray, PyArray1};
 
 // structure to find specific roche potential along a line
 pub struct LineRoche {
@@ -51,8 +52,6 @@ impl LineRoche {
 /// uniformly in azimuth looking from the centre of mass of the primary star.
 /// n is the number of points and must be at least 3.
 /// 
-#[pyfunction]
-#[pyo3(signature = (q, n=200))]
 pub fn lobe1(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
     // Accuracy of location of surface in terms of binary separation
     const FRAC: f64 = 1.0e-6;
@@ -82,6 +81,20 @@ pub fn lobe1(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
     Ok((xarr, yarr))
 }
 
+#[pyfunction]
+#[pyo3(name = "lobe1", signature = (q, n=200))]
+/// 
+/// lobe1 returns arrays x and y for plotting an equatorial section
+/// of the Roche lobe of the primary star in a binary of mass ratio q = M2/M1.
+/// The arrays start and end at the inner Lagrangian point and march around 
+/// uniformly in azimuth looking from the centre of mass of the primary star.
+/// n is the number of points and must be at least 3.
+/// 
+pub fn lobe1_py(py: Python, q: f64, n: usize) -> PyResult<(Py<PyArray1<f64>>, Py<PyArray1<f64>>)> {
+    let (xarr, yarr) = lobe1(q, n)?;
+    Ok((xarr.into_pyarray(py).unbind(), yarr.into_pyarray(py).unbind()))
+}
+
 /// 
 /// lobe2 returns arrays x and y for plotting an equatorial section
 /// of the Roche lobe of the secondary star in a binary of mass ratio q = M2/M1.
@@ -89,8 +102,6 @@ pub fn lobe1(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
 /// uniformly in azimuth looking from the centre of mass of the primary star.
 /// n is the number of points and must be at least 3.
 /// 
-#[pyfunction]
-#[pyo3(signature = (q, n=200))]
 pub fn lobe2(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
     // Accuracy of location of surface in terms of binary separation
     const FRAC: f64 = 1.0e-6;
@@ -121,15 +132,27 @@ pub fn lobe2(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
     Ok((xarr, yarr))
 }
 
+#[pyfunction]
+#[pyo3(name = "lobe2", signature = (q, n=200))]
+/// 
+/// lobe2 returns arrays x and y for plotting an equatorial section
+/// of the Roche lobe of the secondary star in a binary of mass ratio q = M2/M1.
+/// The arrays start and end at the inner Lagrangian point and march around 
+/// uniformly in azimuth looking from the centre of mass of the primary star.
+/// n is the number of points and must be at least 3.
+/// 
+pub fn lobe2_py(py: Python, q: f64, n: usize) -> PyResult<(Py<PyArray1<f64>>, Py<PyArray1<f64>>)> {
+    let (xarr, yarr) = lobe2(q, n)?;
+    Ok((xarr.into_pyarray(py).unbind(), yarr.into_pyarray(py).unbind()))
+}
+
 ///
 /// returns arrays vx and vy for plotting an equatorial section
-/// of the Roche lobe of the secondary star in a binary of mass ratio q = M2/M1
+/// of the Roche lobe of the primary star in a binary of mass ratio q = M2/M1
 /// in Doppler coordinates. The arrays start and end at the inner Lagrangian 
 /// point and march around uniformly in azimuth looking from the centre of 
 /// mass of the primary star. n is the number of points and must be at least 3. 
-/// 
-#[pyfunction]
-#[pyo3(signature = (q, n=200))]
+///
 pub fn vlobe1(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
 
     let mut tvx: f64;
@@ -150,6 +173,20 @@ pub fn vlobe1(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
     Ok((vx_arr, vy_arr))
 }
 
+#[pyfunction]
+#[pyo3(name = "vlobe1", signature = (q, n=200))]
+///
+/// returns arrays vx and vy for plotting an equatorial section
+/// of the Roche lobe of the primary star in a binary of mass ratio q = M2/M1
+/// in Doppler coordinates. The arrays start and end at the inner Lagrangian 
+/// point and march around uniformly in azimuth looking from the centre of 
+/// mass of the primary star. n is the number of points and must be at least 3. 
+/// 
+pub fn vlobe1_py(py: Python, q: f64, n: usize) -> PyResult<(Py<PyArray1<f64>>, Py<PyArray1<f64>>)> {
+    let (xarr, yarr) = vlobe1(q, n)?;
+    Ok((xarr.into_pyarray(py).unbind(), yarr.into_pyarray(py).unbind()))
+}
+
 ///
 /// returns arrays vx and vy for plotting an equatorial section
 /// of the Roche lobe of the secondary star in a binary of mass ratio q = M2/M1
@@ -157,8 +194,6 @@ pub fn vlobe1(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
 /// point and march around uniformly in azimuth looking from the centre of 
 /// mass of the primary star. n is the number of points and must be at least 3. 
 /// 
-#[pyfunction]
-#[pyo3(signature = (q, n=200))]
 pub fn vlobe2(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
 
     let mut tvx: f64;
@@ -177,6 +212,20 @@ pub fn vlobe2(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
         vy_arr.push(tvy);
     }
     Ok((vx_arr, vy_arr))
+}
+
+#[pyfunction]
+#[pyo3(name = "vlobe2", signature = (q, n=200))]
+///
+/// returns arrays vx and vy for plotting an equatorial section
+/// of the Roche lobe of the secondary star in a binary of mass ratio q = M2/M1
+/// in Doppler coordinates. The arrays start and end at the inner Lagrangian 
+/// point and march around uniformly in azimuth looking from the centre of 
+/// mass of the primary star. n is the number of points and must be at least 3. 
+/// 
+pub fn vlobe2_py(py: Python, q: f64, n: usize) -> PyResult<(Py<PyArray1<f64>>, Py<PyArray1<f64>>)> {
+    let (xarr, yarr) = vlobe2(q, n)?;
+    Ok((xarr.into_pyarray(py).unbind(), yarr.into_pyarray(py).unbind()))
 }
 
 /// rtsafe is a Numerical Recipes-based routine to find roots

@@ -3,6 +3,7 @@ use crate::x_l1;
 use crate::{Vec3, vel_transform};
 use bulirsch::{self, Integrator};
 use pyo3::prelude::*;
+use numpy::{IntoPyArray, PyArray1};
 
 ///
 /// strinit sets a particle just inside the L1 point with the
@@ -50,8 +51,6 @@ pub fn strinit(q: f64) -> Result<(Vec3, Vec3), RocheError> {
 /// * `x`:    array of x values returned.
 /// * `y`:    array of y values returned.
 ///
-#[pyfunction]
-#[pyo3(signature = (q, step, n_points=200))]
 pub fn stream(q: f64, step: f64, n_points: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
     if n_points < 2 {
         return Err(RocheError::ParameterError(
@@ -130,6 +129,31 @@ pub fn stream(q: f64, step: f64, n_points: usize) -> Result<(Vec<f64>, Vec<f64>)
     }
 
     Ok((x_arr, y_arr))
+}
+
+///
+/// stream works by integrating the equations of motion for the Roche
+/// potential using Burlisch-Stoer integration. Every time the distance
+/// from the last point exceeds step, it interpolates and stores a new
+/// point. This allows one not to spend loads of points on regions where
+/// nothing is happening.
+///
+/// Arguments:
+///
+/// * `q`:    mass ratio = M2/M1. Stream flows from star 2 to 1.
+/// * `step`: step between points (units of separation).
+/// * `n_points`:    number of points to compute.
+///
+/// Returns:
+///
+/// * `x`:    array of x values returned.
+/// * `y`:    array of y values returned.
+///
+#[pyfunction]
+#[pyo3(name = "stream", signature = (q, step, n_points=200))]
+pub fn stream_py(py: Python, q: f64, step: f64, n_points: usize) -> PyResult<(Py<PyArray1<f64>>, Py<PyArray1<f64>>)> {
+    let (x_arr, y_arr) = stream(q, step, n_points)?;
+    Ok((x_arr.into_pyarray(py).unbind(), y_arr.into_pyarray(py).unbind()))
 }
 
 ///
@@ -259,8 +283,6 @@ pub fn strmnx_wrapper(
 /// * `x`: array of x values returned.
 /// * `y`: array of y values returned.
 ///
-#[pyfunction]
-#[pyo3(signature = (q, rad, n_points=200))]
 pub fn streamr(q: f64, rad: f64, n_points: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
     if n_points < 2 {
         return Err(RocheError::ParameterError(
@@ -298,6 +320,29 @@ pub fn streamr(q: f64, rad: f64, n_points: usize) -> Result<(Vec<f64>, Vec<f64>)
     }
 
     Ok((x_arr, y_arr))
+}
+
+///
+/// streamr works by integrating the equations of motion for the Roche
+/// potential using Burlisch-Stoer integration. It stops when the stream
+/// reaches a target radius or a minimum radius, whichever is the larger.
+///
+/// Arguments:
+///
+/// * `q`: mass ratio = M2/M1. Stream flows from star 2 to 1.
+/// * `rad`: Radius to aim for. If this is less than the minimum, the stream will stop at the minimum
+/// * `n_points`: number of points to compute.
+///
+/// Results:
+///
+/// * `x`: array of x values returned.
+/// * `y`: array of y values returned.
+///
+#[pyfunction]
+#[pyo3(name = "streamr", signature = (q, rad, n_points=200))]
+pub fn streamr_py(py: Python, q: f64, rad: f64, n_points: usize) -> PyResult<(Py<PyArray1<f64>>, Py<PyArray1<f64>>)> {
+    let (x_arr, y_arr) = streamr(q, rad, n_points)?;
+    Ok((x_arr.into_pyarray(py).unbind(), y_arr.into_pyarray(py).unbind()))
 }
 
 ///
@@ -425,7 +470,7 @@ pub fn stradv(q: f64, r: &mut Vec3, v: &mut Vec3, rad: f64, acc: f64, smax: f64)
 ///
 #[pyfunction]
 #[pyo3(name = "stradv")]
-pub fn stradv_wrapper(
+pub fn stradv_py(
     q: f64,
     r: &Vec3,
     v: &Vec3,

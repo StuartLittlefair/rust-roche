@@ -1,11 +1,11 @@
-use std::f64::consts::PI;
-use pyo3::prelude::*;
 use crate::errors::RocheError;
 use crate::{Vec3, Star, fblink, rpot, set_earth_iangle, x_l1};
 use crate::lobes::{rtsafe, LineRoche};
+use std::f64::consts::PI;
+use pyo3::prelude::*;
+use numpy::{IntoPyArray, PyArray1};
 
-#[pyfunction]
-#[pyo3(name = "shadow", signature = (q, iangle, phi, n=200, dist=5.0, acc=1.0e-4))]
+
 pub fn roche_shadow(q: f64, iangle: f64, phi: f64, n: i32, dist: f64, acc: f64) -> Result<(Vec<f64>, Vec<f64>, Vec<bool>), RocheError> {
 
     if q <= 0.0 {
@@ -94,4 +94,29 @@ pub fn roche_shadow(q: f64, iangle: f64, phi: f64, n: i32, dist: f64, acc: f64) 
 
     Ok((x, y, shade))
 
+}
+
+#[pyfunction]
+#[pyo3(name = "shadow", signature = (q, iangle, phi, n=200, dist=5.0, acc=1.0e-4))]
+///
+///    Compute roche shadow region in equatorial plane
+///    x,y,s = shadow(q, iangle, phi, n=200, dist=5., acc=1.e-4),
+///
+///    Arguments:
+///        q (float):  M2/M1.
+///        iangle (float): inclination
+///        phi (float): orbital phase
+///        n (int): number of points in output arrays
+///        dist (float): maximum distance to search for shadow measured
+///        acc (float): numerical accuracy parameter
+///    Returns:
+///        (np.ndarray[float]): x array of roche lobe shadow
+///        (np.ndarray[float]): y array of roche lobe shadow
+///        (np.ndarray[bool]): true/false if genuine shade or not.
+///                            The array goes all the way round and when not in shade it
+///                            will be glued to the red star. This array allows you to see if this is the case or not.
+/// 
+pub fn roche_shadow_py(py: Python, q: f64, iangle: f64, phi: f64, n: i32, dist: f64, acc: f64) -> PyResult<(Py<PyArray1<f64>>, Py<PyArray1<f64>>, Py<PyArray1<bool>>)> {
+    let (xarr, yarr, shade) = roche_shadow(q, iangle, phi, n, dist, acc)?;
+    Ok((xarr.into_pyarray(py).unbind(), yarr.into_pyarray(py).unbind(), shade.into_pyarray(py).unbind()))
 }

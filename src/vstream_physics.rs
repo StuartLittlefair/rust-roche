@@ -3,6 +3,7 @@ use crate::x_l1;
 use crate::{Vec3, vel_transform, strinit, stradv, strmnx, rocacc, OrbitalSystem};
 use bulirsch::{self, Integrator};
 use pyo3::prelude::*;
+use numpy::{IntoPyArray, PyArray1};
 
 
 
@@ -107,9 +108,6 @@ pub fn vstream(q: f64, step: f64, n_points: usize, transform_type: i32) -> Resul
 
 }
 
-#[pyfunction]
-#[pyo3(name = "vstream")]
-#[pyo3(signature = (q, step=0.01, n_points=60, transform_type=1))]
 pub fn vstream_reg(q: f64, step: f64, n_points: usize, transform_type: i32) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
 
     const TLOC: f64 = 1.0e-8;
@@ -177,3 +175,10 @@ pub fn vstream_reg(q: f64, step: f64, n_points: usize, transform_type: i32) -> R
 }
 
 
+#[pyfunction]
+#[pyo3(name = "vstream")]
+#[pyo3(signature = (q, step=0.01, n_points=60, transform_type=1))]
+pub fn vstream_reg_py(py: Python, q: f64, step: f64, n_points: usize, transform_type: i32) -> PyResult<(Py<PyArray1<f64>>, Py<PyArray1<f64>>)> {
+    let (x_arr, y_arr) = vstream_reg(q, step, n_points, transform_type)?;
+    Ok((x_arr.into_pyarray(py).unbind(), y_arr.into_pyarray(py).unbind()))
+}
