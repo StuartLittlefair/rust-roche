@@ -488,6 +488,30 @@ pub fn brightspot_position(q: f64, rad: f64, acc: f64, smax: f64) -> Result<Vec3
     Ok(r)
 }
 
+///
+/// bspot runs strinit then stradv to get the coordinate and velocity
+/// vectors of the gas stream when it reaches a given radius from the primary star.
+///
+/// Arguments:
+///
+/// * `q`:  mass ratio = M2/M1
+/// * `rad`: radius from primary star
+/// * `acc`: computational accuracy
+/// * `smax`: maximum time step of Bulirsch-Stoer integration
+///
+/// Returns:
+/// * `r`: Vec3 coordinates of gas stream at given radius from primary star
+/// * `v`: Vec3 velocity of gas stream at given radius from primary star
+///
+#[pyfunction]
+#[pyo3(signature = (q, rad, acc=1.0e-7, smax=1.0e-2))]
+pub fn bspot(q: f64, rad: f64, acc: f64, smax: f64) -> Result<(Vec3, Vec3), RocheError> {
+    let (mut r, mut v) = strinit(q)?;
+    let _ = stradv(q, &mut r, &mut v, rad, acc, smax);
+
+    Ok((r, v))
+}
+
 pub struct OrbitalSystem {
     pub q: f64,
 }
@@ -566,6 +590,15 @@ mod tests {
         // Values from trm.roche.bspot
         let r = brightspot_position(0.2, 0.3, 1.0e-7, 1.0e-3)?;
         assert!((r - Vec3::new(0.2660591412807423, 0.13860932478255575, 0.0)).length() < 1.0e-7);
+        Ok(())
+    }
+
+    #[test]
+    fn bspot_test() -> Result<(), RocheError> {
+        // Values from trm.roche.bspot
+        let (r, v) = bspot(0.2, 0.3, 1.0e-7, 1.0e-3)?;
+        assert!((r - Vec3::new(0.2660591412807423, 0.13860932478255575, 0.0)).length() < 1.0e-7);
+        assert!((v - Vec3::new(-1.476945722613775, 0.31712381223279495, 0.0)).length() < 1.0e-6);
         Ok(())
     }
 }

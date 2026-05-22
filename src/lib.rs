@@ -138,6 +138,7 @@ fn roche(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(stream_physics::streamr, m)?)?;
     m.add_function(wrap_pyfunction!(stream_physics::strmnx_wrapper, m)?)?;
     m.add_function(wrap_pyfunction!(stream_physics::brightspot_position, m)?)?;
+    m.add_function(wrap_pyfunction!(stream_physics::bspot, m)?)?;
     m.add_function(wrap_pyfunction!(vstream_physics::vstream_reg, m)?)?;
     m.add_function(wrap_pyfunction!(x_lagrange::x_l1, m)?)?;
     m.add_function(wrap_pyfunction!(x_lagrange::x_l1_1, m)?)?;
