@@ -5,17 +5,17 @@ use crate::{Star, Vec3};
 use pyo3::prelude::*;
 
 // structure to find specific roche potential along a line
-struct LineRoche {
+pub struct LineRoche {
     // mass ratio
-    q: f64,
+    pub q: f64,
     // which star are we concerned with? (primary or secondary)
-    star: Star,
+    pub star: Star,
     // direction of line in x
-    dx: f64,
+    pub dx: f64,
     // direction of line in y
-    dy: f64,
+    pub dy: f64,
     // critical potential to solve for
-    cpot: f64,
+    pub cpot: f64,
 }
 
 impl LineRoche {
@@ -29,7 +29,7 @@ impl LineRoche {
         }
     }
 
-    fn cost(&self, lam: f64) -> Result<(f64, f64), RocheError> {
+    pub fn cost(&self, lam: f64) -> Result<(f64, f64), RocheError> {
         let p: Vec3 = match self.star {
             Star::Primary => Vec3::new(lam * self.dx, lam * self.dy, 0.0),
             Star::Secondary => Vec3::new(1.0 + lam * self.dx, lam * self.dy, 0.0),

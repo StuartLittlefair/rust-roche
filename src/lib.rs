@@ -47,6 +47,9 @@ pub use ref_sphere::*;
 pub mod roche_context;
 pub use roche_context::RocheContext;
 
+pub mod roche_shadow;
+pub use roche_shadow::*;
+
 pub mod set_earth;
 pub use set_earth::*;
 
@@ -116,6 +119,7 @@ fn roche(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(potential::rpot_val, m)?)?;
     m.add_function(wrap_pyfunction!(potential::rpot_val_grad, m)?)?;
     m.add_function(wrap_pyfunction!(ref_sphere::ref_sphere, m)?)?;
+    m.add_function(wrap_pyfunction!(roche_shadow::roche_shadow, m)?)?;
     m.add_function(wrap_pyfunction!(set_earth::set_earth_iangle, m)?)?;
     m.add_function(wrap_pyfunction!(set_earth::set_earth, m)?)?;
     m.add_function(wrap_pyfunction!(sphere_eclipse::sphere_eclipse_wrapper, m)?)?;
