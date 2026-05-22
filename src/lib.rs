@@ -41,6 +41,9 @@ pub use pot_min::*;
 pub mod potential;
 pub use potential::*;
 
+pub mod rcirc;
+pub use rcirc::*;
+
 pub mod ref_sphere;
 pub use ref_sphere::*;
 
@@ -118,6 +121,7 @@ fn roche(_py: Python, m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(potential::drpot2, m)?)?;
     m.add_function(wrap_pyfunction!(potential::rpot_val, m)?)?;
     m.add_function(wrap_pyfunction!(potential::rpot_val_grad, m)?)?;
+    m.add_function(wrap_pyfunction!(rcirc::rcirc, m)?)?;
     m.add_function(wrap_pyfunction!(ref_sphere::ref_sphere, m)?)?;
     m.add_function(wrap_pyfunction!(roche_shadow::roche_shadow, m)?)?;
     m.add_function(wrap_pyfunction!(set_earth::set_earth_iangle, m)?)?;

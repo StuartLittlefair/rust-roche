@@ -13,6 +13,10 @@ cargo add rust-roche
 
 Some functions from cpp-roche have not been translated yet so this is still a work-in-progress. Please add an issue on the Github repo if there's a specific function from cpp-roche that you'd like adding.
 
+Functions still to add are:
+* qirbs
+* pvstream
+
 ### Python
 This package has also been wrapped for python to replicate [trm-roche](https://github.com/trmrsh/trm-roche/tree/master) and can be installed with pip from PyPI
 
