@@ -52,6 +52,7 @@ impl LineRoche {
 /// n is the number of points and must be at least 3.
 /// 
 #[pyfunction]
+#[pyo3(signature = (q, n=200))]
 pub fn lobe1(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
     // Accuracy of location of surface in terms of binary separation
     const FRAC: f64 = 1.0e-6;
@@ -89,6 +90,7 @@ pub fn lobe1(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
 /// n is the number of points and must be at least 3.
 /// 
 #[pyfunction]
+#[pyo3(signature = (q, n=200))]
 pub fn lobe2(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
     // Accuracy of location of surface in terms of binary separation
     const FRAC: f64 = 1.0e-6;
@@ -127,6 +129,7 @@ pub fn lobe2(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
 /// mass of the primary star. n is the number of points and must be at least 3. 
 /// 
 #[pyfunction]
+#[pyo3(signature = (q, n=200))]
 pub fn vlobe1(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
 
     let mut tvx: f64;
@@ -155,6 +158,7 @@ pub fn vlobe1(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
 /// mass of the primary star. n is the number of points and must be at least 3. 
 /// 
 #[pyfunction]
+#[pyo3(signature = (q, n=200))]
 pub fn vlobe2(q: f64, n: usize) -> Result<(Vec<f64>, Vec<f64>), RocheError> {
 
     let mut tvx: f64;
