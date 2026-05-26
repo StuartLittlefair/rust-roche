@@ -11,6 +11,15 @@ The latest version of rust-roche can be viewed at [rust-roche](https://crates.io
 cargo add rust-roche
 ```
 
+### Python
+This package has also been wrapped for python to replicate [trm-roche](https://github.com/trmrsh/trm-roche/tree/master) and can be installed with pip from PyPI
+
+```
+pip install roche
+```
+
+This is very much a first go at it. Most functions have been tested against their trm.roche counterparts however not all functions have been tested as of yet and some bugs may remain. Please add an issue on the Github repo if you find any.
+
 Some functions from cpp-roche/trm-roche have not been translated yet so this is still a work-in-progress. Please add an issue on the Github repo if there's a specific function from cpp-roche/trm-roche that you'd like adding.
 
 Functions still to add for Python are:
@@ -27,12 +36,3 @@ Functions still to add for Rust are:
 * irrad
 * rdot
 * rlobe_eggleton
-
-### Python
-This package has also been wrapped for python to replicate [trm-roche](https://github.com/trmrsh/trm-roche/tree/master) and can be installed with pip from PyPI
-
-```
-pip install roche
-```
-
-This is very much a first go at it. Most functions have been tested against their trm.roche counterparts however not all functions have been tested as of yet and some bugs may remain. Please add an issue on the Github repo if you find any.
